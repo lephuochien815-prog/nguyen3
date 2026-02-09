@@ -28,7 +28,7 @@
             background: #000000;
             font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Segoe UI', sans-serif;
             color: #FFD700;
-             cursor: url("chuot.png"), auto;
+             cursor: url("image/chuot.png"), auto;
         }
 
         /* Password Screen */
@@ -931,18 +931,18 @@
 
     <!-- Audio -->
     <audio id="background-music" preload="auto" loop>
-        <source src="download.mp3" type="audio/mpeg">
-        <source src="xinloi.mp3" type="audio/mpeg">
+        <source src="audio/Download.mp3" type="audio/mpeg">
+        <source src="audio/xinloi.mp3" type="audio/mpeg">
     </audio>
     
     <!-- Audio cho giấy khen -->
     <audio id="celebration-audio" preload="auto">
-        <source src="audio.mp3" type="audio/mpeg">
+        <source src="audio/audio.mp3" type="audio/mpeg">
     </audio>
 
     <!-- Audio cho lá thư -->
     <audio id="letter-audio" preload="auto" loop>
-        <source src="xinloi.mp3" type="audio/mpeg">
+        <source src="audio/xinloi.mp3" type="audio/mpeg">
     </audio>
 
     <!-- Audio Control -->
@@ -1194,8 +1194,8 @@ Thương em rất nhiều.</p>
             
             // Load cả hai bài hát
             const sources = [
-                { src: 'download.mp3', type: 'audio/mpeg' },
-                { src: 'xinloi.mp3', type: 'audio/mpeg' }
+                { src: 'audio/Download.mp3', type: 'audio/mpeg' },
+                { src: 'audio/xinloi.mp3', type: 'audio/mpeg' }
             ];
             
             // Thêm các source vào audio element
@@ -1290,7 +1290,7 @@ Thương em rất nhiều.</p>
         // ================== CERTIFICATE ==================
         function showCertificate() {
             // Load hình giấy khen
-            certificateImg.src = 'giaykhen.png';
+            certificateImg.src = 'image/giaykhen.png';
             certificateImg.onerror = createDefaultCertificate;
             
             certificateContainer.style.display = 'flex';
@@ -1540,16 +1540,16 @@ Thương em rất nhiều.</p>
             letterCatchAttempts = 0;
 
             const ALBUM_IMAGES = [
-                { image: 'image1.png' },
-                { image: 'image2.png' },
-                { image: 'image3.png' },
-                { image: 'image4.png' },
-                { image: 'image5.png' },
-                { image: 'image6.png' },
-                { image: 'image7.png' },
-                { image: 'image8.png' },
-                { image: 'image9.png' },
-                { image: 'image10.png' },
+                { image: 'image/image1.png' },
+                { image: 'image/image2.png' },
+                { image: 'image/image3.png' },
+                { image: 'image/image4.png' },
+                { image: 'image/image5.png' },
+                { image: 'image/image6.png' },
+                { image: 'image/image7.png' },
+                { image: 'image/image8.png' },
+                { image: 'image/image9.png' },
+                { image: 'image/image10.png' },
                 { 
                     image: 'letter-icon.png',
                     isLetter: true 
@@ -1935,16 +1935,16 @@ Thương em rất nhiều.</p>
         // ================== UTILITY FUNCTIONS ==================
         function getAlbumImages() {
             return [
-                { image: 'image1.png' },
-                { image: 'image2.png' },
-                { image: 'image3.png' },
-                { image: 'image4.png' },
-                { image: 'image5.png' },
-                { image: 'image6.png' },
-                { image: 'image7.png' },
-                { image: 'image8.png' },
-                { image: 'image9.png' },
-                { image: 'image10.png' },
+                { image: 'image/image1.png' },
+                { image: 'image/image2.png' },
+                { image: 'image/image3.png' },
+                { image: 'image/image4.png' },
+                { image: 'image/image5.png' },
+                { image: 'image/image6.png' },
+                { image: 'image/image7.png' },
+                { image: 'image/image8.png' },
+                { image: 'image/image9.png' },
+                { image: 'image/image10.png' },
                 { 
                     image: 'letter-icon.png',
                     isLetter: true 
