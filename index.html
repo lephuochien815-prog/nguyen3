@@ -168,7 +168,7 @@
 
         .close-x-btn:hover, .close-x-btn:active {
             background: rgba(255, 215, 0, 0.2);
-            transform: scale(1.1) rotate(90deg);
+            transform: scale(1.1) ;
         }
 
         /* Intro Screen - Apple Style */
@@ -288,13 +288,13 @@
 
         @keyframes floatCertificate {
             0%, 100% { 
-                transform: translateY(0px) rotateX(0deg) rotateY(0deg); 
+                transform: translateY(0px) ; 
             }
             25% { 
-                transform: translateY(-15px) rotateX(1deg) rotateY(0.5deg); 
+                transform: translateY(-15px) ; 
             }
             75% { 
-                transform: translateY(8px) rotateX(-0.5deg) rotateY(-0.3deg); 
+                transform: translateY(8px) ; 
             }
         }
 
@@ -592,13 +592,13 @@
 
         @keyframes letterFloat {
             0%, 100% { 
-                transform: translateY(0px) rotateX(0deg) rotateY(0deg); 
+                transform: translateY(0px) ; 
             }
             33% { 
-                transform: translateY(-15px) rotateX(3deg) rotateY(2deg); 
+                transform: translateY(-15px) ; 
             }
             66% { 
-                transform: translateY(10px) rotateX(-2deg) rotateY(-1deg); 
+                transform: translateY(10px) ; 
             }
         }
 
@@ -623,14 +623,14 @@
 
         @keyframes appleFloat {
             0%, 100% { 
-                transform: translateY(0px) rotateX(0deg) rotateY(0deg); 
+                transform: translateY(0px) ; 
                 box-shadow: 
                     0 4px 6px -1px rgba(0, 0, 0, 0.1),
                     0 2px 4px -1px rgba(0, 0, 0, 0.06),
                     0 0 0 1px rgba(255, 215, 0, 0.05);
             }
             50% { 
-                transform: translateY(-12px) rotateX(2deg) rotateY(1deg); 
+                transform: translateY(-12px) ; 
                 box-shadow: 
                     0 20px 25px -5px rgba(255, 215, 0, 0.1),
                     0 10px 10px -5px rgba(255, 215, 0, 0.04),
@@ -791,7 +791,7 @@
 
         .close-btn:hover, .close-btn:active {
             background: rgba(255, 215, 0, 0.2);
-            transform: scale(1.1) rotate(90deg);
+            transform: scale(1.1) ;
         }
 
         /* Navigation Arrows */
@@ -1934,7 +1934,7 @@ Thương em rất nhiều.</p>
                 const rotationY = Math.cos(time + index * 0.4) * 0.3;
                 // Nếu không phải lá thư, áp dụng animation bình thường
                 if (!img.isLetter) {
-                    img.element.style.transform = `translate(${floatX}px, ${floatY}px) rotateX(${rotationX}deg) rotateY(${rotationY}deg)`;
+                    img.element.style.transform = `translate(${floatX}px, ${floatY}px) `;
                 }
                 const centerX = 50;
                 const centerY = 50;
