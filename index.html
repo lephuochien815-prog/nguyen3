@@ -1905,6 +1905,16 @@ Thương em rất nhiều.</p>
                 floatingImages.forEach(img => {
                     img.element.style.display = 'none';
                 });
+                // Nếu ảnh mở là giấy khen, phát audio chúc mừng
+                try {
+                    if (item && item.image && item.image.includes('giaykhen.png')) {
+                        celebrationAudio.currentTime = 0;
+                        celebrationAudio.volume = 0.8;
+                        celebrationAudio.play().catch(() => {});
+                    }
+                } catch (e) {
+                    console.log('Audio play error', e);
+                }
             }, 10);
         }
 
