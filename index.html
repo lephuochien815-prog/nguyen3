@@ -4,11 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Ngừ iu đít bự</title>
-    
     <style>
         /* Reset và base styles */
-   
-
         * {
             margin: 0;
             padding: 0;
@@ -19,6 +16,22 @@
             -ms-user-select: none;
             user-select: none;
             touch-action: manipulation;
+        }
+
+        /* Allow text selection and paste for form controls (fix iOS paste behavior) */
+        input, textarea, select {
+            -webkit-user-select: text !important;
+            -moz-user-select: text !important;
+            -ms-user-select: text !important;
+            user-select: text !important;
+            touch-action: manipulation;
+        }
+
+        /* Specifically ensure password input accepts paste/selection */
+        #password-input {
+            -webkit-user-select: text !important;
+            user-select: text !important;
+            -webkit-user-modify: read-write-plaintext-only;
         }
 
         html, body {
@@ -319,7 +332,8 @@
             box-shadow: 
                 0 0 60px rgba(255, 215, 0, 0.3),
                 0 20px 40px rgba(0, 0, 0, 0.5);
-            animation: floatCertificate 4s ease-in-out infinite;
+            /* Disabled floating animation so the letter stays still */
+            animation: none;
             display: flex;
             flex-direction: column;
             gap: 25px;
@@ -432,6 +446,117 @@
             transform-style: preserve-3d;
         }
 
+        /* Grid mode: arrange images neatly in a 3-per-row grid */
+        #floating-container.grid-mode {
+            position: relative;
+            display: grid;
+            grid-template-columns: repeat(3, minmax(160px, 1fr));
+            gap: 20px;
+            align-items: center;
+            justify-items: center;
+            padding: 40px;
+            pointer-events: auto;
+        }
+
+        /* Make grid responsive: 2 columns on small screens */
+        @media (max-width: 800px) {
+            #floating-container.grid-mode {
+                grid-template-columns: repeat(2, minmax(140px, 1fr));
+                padding: 20px;
+                gap: 14px;
+            }
+        }
+
+        /* In grid mode, disable individual floating animations and allow pointer events */
+        #floating-container.grid-mode .floating-image {
+            position: relative;
+            left: auto !important;
+            top: auto !important;
+            transform: none !important;
+            animation: none !important;
+            opacity: 1 !important;
+            pointer-events: auto;
+        }
+
+        /* Smaller letter icon when in grid mode */
+        #floating-container.grid-mode .floating-image.letter {
+            width: clamp(100px, 15vw, 120px) !important;
+            height: clamp(80px, 12vw, 100px) !important;
+            border-radius: 12px;
+        }
+
+        /* Floating menu (persistent) */
+        #floating-menu {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 100005;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            pointer-events: auto;
+        }
+
+        .menu-letter {
+            width: 64px;
+            height: 64px;
+            border-radius: 14px;
+            background: rgba(255, 86, 86, 0.14);
+            border: 1px solid rgba(255, 86, 86, 0.26);
+            color: #FF5555;
+            font-size: 26px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            backdrop-filter: blur(6px);
+        }
+
+        .menu-letter:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(255,86,86,0.12);
+        }
+
+        /* Confirmation modal */
+        .confirm-modal {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0,0,0,0.5);
+            z-index: 100010;
+            padding: 20px;
+        }
+
+        .confirm-content {
+            background: #111;
+            color: #FFD700;
+            border: 1px solid rgba(255,215,0,0.15);
+            padding: 20px;
+            border-radius: 12px;
+            max-width: 420px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+        }
+
+        .confirm-actions {
+            margin-top: 16px;
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .confirm-actions button {
+            padding: 10px 16px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,215,0,0.12);
+            background: rgba(255,215,0,0.04);
+            color: #FFD700;
+            cursor: pointer;
+        }
+
         /* Floating Image - APPLE STYLE với bo tròn */
         .floating-image {
             position: absolute;
@@ -478,7 +603,8 @@
         }
 
         .floating-image.letter:hover {
-            animation: letterDance 0.8s ease-out forwards;
+            /* faster dance on hover */
+            animation: letterDance 0.35s ease-out forwards;
             transform: scale(1.2) !important;
             z-index: 1000;
             border-color: rgba(255, 86, 86, 0.5);
@@ -883,15 +1009,12 @@
             .close-x-btn, #back-button {
                 top: max(20px, env(safe-area-inset-top));
             }
-            
             .instruction, .letter-catch-counter {
                 bottom: max(20px, env(safe-area-inset-bottom));
             }
-            
             .letter-catch-counter {
                 top: max(80px, env(safe-area-inset-top) + 60px);
             }
-            
             #skip-certificate,
             #skip-letter {
                 bottom: max(40px, env(safe-area-inset-bottom) + 20px);
@@ -934,7 +1057,6 @@
         <source src="audio/Download.mp3" type="audio/mpeg">
         <source src="audio/xinloi.mp3" type="audio/mpeg">
     </audio>
-    
     <!-- Audio cho giấy khen -->
     <audio id="celebration-audio" preload="auto">
         <source src="audio/audio.mp3" type="audio/mpeg">
@@ -947,6 +1069,22 @@
 
     <!-- Audio Control -->
     <button id="audio-control">♫</button>
+
+    <!-- Floating Menu (persistent) -->
+    <div id="floating-menu">
+        <button id="menu-letter" class="menu-letter" aria-label="Mở lá thư">📨</button>
+    </div>
+
+    <!-- Confirmation Modal for opening letter -->
+    <div id="confirm-modal" class="confirm-modal" style="display:none;">
+        <div class="confirm-content">
+            <p>Bạn có chắc chắn muốn mở lá thư?</p>
+            <div class="confirm-actions">
+                <button id="confirm-yes">Đồng ý</button>
+                <button id="confirm-no">Hủy</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Back Button -->
     <button id="back-button">←</button>
@@ -1002,10 +1140,8 @@ Thương em rất nhiều.</p>
     <!-- Main App -->
     <div id="main-app">
         <div id="floating-container"></div>
-        
         <!-- Instruction -->
         <div class="instruction">Chạm vào ảnh để xem chi tiết • Kéo thả để di chuyển</div>
-        
         <!-- Selected View -->
         <div id="selected-container">
             <div class="selected-content">
@@ -1014,7 +1150,6 @@ Thương em rất nhiều.</p>
                 </div>
                 <div class="selected-details"></div>
             </div>
-            
             <button class="close-btn" id="close-btn">✕</button>
             <button class="nav-arrow" id="prev-arrow">‹</button>
             <button class="nav-arrow" id="next-arrow">›</button>
@@ -1059,6 +1194,10 @@ Thương em rất nhiều.</p>
         const backButton = document.getElementById('back-button');
         const letterCatchCounter = document.getElementById('letter-catch-counter');
         const catchCount = document.getElementById('catch-count');
+        const menuLetter = document.getElementById('menu-letter');
+        const confirmModal = document.getElementById('confirm-modal');
+        const confirmYes = document.getElementById('confirm-yes');
+        const confirmNo = document.getElementById('confirm-no');
 
         // ================== STATE VARIABLES ==================
         let currentSelectedIndex = 0;
@@ -1080,11 +1219,9 @@ Thương em rất nhiều.</p>
         // ================== PASSWORD FUNCTIONS ==================
         function checkPassword() {
             const enteredPassword = passwordInput.value.trim();
-            
             if (enteredPassword === CORRECT_PASSWORD) {
                 passwordError.classList.remove('show');
                 passwordInput.value = '';
-                
                 // Chuyển sang intro screen
                 passwordScreen.style.opacity = '0';
                 setTimeout(() => {
@@ -1098,13 +1235,11 @@ Thương em rất nhiều.</p>
                 passwordError.classList.add('show');
                 passwordInput.value = '';
                 passwordInput.focus();
-                
                 // Hiệu ứng shake
                 passwordInput.style.animation = 'none';
                 setTimeout(() => {
                     passwordInput.style.animation = 'shake 0.5s';
                 }, 10);
-                
                 setTimeout(() => {
                     passwordInput.style.animation = '';
                 }, 500);
@@ -1115,7 +1250,6 @@ Thương em rất nhiều.</p>
         function showExitConfirmation() {
             if (confirm('Bạn có muốn thoát khỏi trang web này không?')) {
                 window.close();
-                
                 // Fallback cho trình duyệt không cho phép đóng tự động
                 if (!window.closed) {
                     window.location.href = 'about:blank';
@@ -1156,7 +1290,6 @@ Thương em rất nhiều.</p>
         document.addEventListener('mousemove', (e) => {
             mouseX = e.clientX;
             mouseY = e.clientY;
-            
             if (letterElement && !letterEscaping) {
                 checkLetterEscape(e.clientX, e.clientY);
             }
@@ -1175,7 +1308,6 @@ Thương em rất nhiều.</p>
         // Focus password input on load
         window.addEventListener('DOMContentLoaded', () => {
             passwordInput.focus();
-            
             // Thêm CSS cho hiệu ứng shake
             const style = document.createElement('style');
             style.textContent = `
@@ -1186,18 +1318,15 @@ Thương em rất nhiều.</p>
                 }
             `;
             document.head.appendChild(style);
-            
             // Thiết lập audio
             backgroundMusic.volume = 0.6;
             backgroundMusic.loop = true;
             letterAudio.volume = 0.7;
-            
             // Load cả hai bài hát
             const sources = [
                 { src: 'audio/Download.mp3', type: 'audio/mpeg' },
                 { src: 'audio/xinloi.mp3', type: 'audio/mpeg' }
             ];
-            
             // Thêm các source vào audio element
             backgroundMusic.innerHTML = '';
             sources.forEach(source => {
@@ -1206,7 +1335,6 @@ Thương em rất nhiều.</p>
                 sourceElement.type = source.type;
                 backgroundMusic.appendChild(sourceElement);
             });
-            
             // Thử phát nhạc (cần user interaction)
             backgroundMusic.load();
         });
@@ -1217,6 +1345,38 @@ Thương em rất nhiều.</p>
             e.preventDefault();
             toggleMusic();
         });
+
+        // Floating menu letter: show confirmation before opening
+        if (menuLetter) {
+            menuLetter.addEventListener('click', (e) => {
+                e.stopPropagation();
+                confirmModal.style.display = 'flex';
+            });
+            menuLetter.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                confirmModal.style.display = 'flex';
+            });
+        }
+
+        if (confirmYes) {
+            confirmYes.addEventListener('click', (e) => {
+                e.stopPropagation();
+                confirmModal.style.display = 'none';
+                showLetter();
+            });
+        }
+        if (confirmNo) {
+            confirmNo.addEventListener('click', (e) => {
+                e.stopPropagation();
+                confirmModal.style.display = 'none';
+            });
+            confirmNo.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                confirmModal.style.display = 'none';
+            });
+        }
 
         function toggleMusic() {
             if (isMusicPlaying) {
@@ -1241,11 +1401,9 @@ Thương em rất nhiều.</p>
 
         function startApp() {
             introScreen.style.opacity = '0';
-            
             if (backgroundMusic.paused) {
                 backgroundMusic.play().catch(console.log);
             }
-            
             setTimeout(() => {
                 introScreen.style.display = 'none';
                 startCountdown();
@@ -1255,18 +1413,14 @@ Thương em rất nhiều.</p>
         // ================== COUNTDOWN ==================
         function startCountdown() {
             countdownContainer.style.display = 'flex';
-            
             let count = 3;
-            
             function showNumber(num) {
                 countdownNumber.textContent = num;
                 countdownNumber.style.opacity = '1';
                 countdownNumber.style.transform = 'scale(1)';
-                
                 setTimeout(() => {
                     countdownNumber.style.opacity = '0';
                     countdownNumber.style.transform = 'scale(0.5)';
-                    
                     if (num > 1) {
                         setTimeout(() => {
                             showNumber(num - 1);
@@ -1278,7 +1432,6 @@ Thương em rất nhiều.</p>
                     }
                 }, 700);
             }
-            
             showNumber(3);
         }
 
@@ -1292,26 +1445,21 @@ Thương em rất nhiều.</p>
             // Load hình giấy khen
             certificateImg.src = 'image/giaykhen.png';
             certificateImg.onerror = createDefaultCertificate;
-            
             certificateContainer.style.display = 'flex';
             setTimeout(() => {
                 certificateContainer.classList.add('show');
             }, 10);
-            
             // Phát nhạc chúc mừng
             celebrationAudio.volume = 0.8;
             celebrationAudio.play().catch(console.log);
-            
             // Bắn pháo hoa
             startFireworks();
-            
             // Tự động chuyển sau 15 giây
             setTimeout(() => {
                 if (certificateContainer.style.display === 'flex') {
                     endCertificate();
                 }
             }, 15000);
-            
             // Sự kiện cho nút skip
             skipCertificateBtn.addEventListener('click', endCertificate);
             skipCertificateBtn.addEventListener('touchstart', (e) => {
@@ -1325,28 +1473,23 @@ Thương em rất nhiều.</p>
             canvas.width = 800;
             canvas.height = 600;
             const ctx = canvas.getContext('2d');
-            
             // Black background
             ctx.fillStyle = '#000000';
             ctx.fillRect(0, 0, 800, 600);
-            
             // Gold border
             ctx.strokeStyle = '#FFD700';
             ctx.lineWidth = 3;
             ctx.strokeRect(30, 30, 740, 540);
-            
             // Inner border
             ctx.strokeStyle = 'rgba(255, 215, 0, 0.5)';
             ctx.lineWidth = 1;
             ctx.strokeRect(40, 40, 720, 520);
-            
             // Title
             ctx.fillStyle = '#FFD700';
             ctx.font = 'bold 60px "Times New Roman", serif';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillText('GIẤY KHEN', 400, 120);
-            
             // Decorative line
             ctx.strokeStyle = '#FFD700';
             ctx.lineWidth = 2;
@@ -1354,49 +1497,39 @@ Thương em rất nhiều.</p>
             ctx.moveTo(150, 140);
             ctx.lineTo(300, 140);
             ctx.stroke();
-            
             ctx.beginPath();
             ctx.moveTo(500, 140);
             ctx.lineTo(650, 140);
             ctx.stroke();
-            
             // Content
             ctx.fillStyle = '#FFFFFF';
             ctx.font = 'italic 32px "Georgia", serif';
             ctx.fillText('Dành tặng em bé yêu dấu', 400, 220);
-            
             ctx.font = '28px "Georgia", serif';
             ctx.fillText('Người đã mang đến hạnh phúc', 400, 280);
             ctx.fillText('và ý nghĩa cho cuộc sống của anh', 400, 320);
-            
             // Heart
             ctx.fillStyle = '#FFD700';
             ctx.font = 'bold 80px Arial';
             ctx.fillText('❤', 400, 400);
-            
             // Signature
             ctx.font = 'italic 36px "Brush Script MT", cursive';
             ctx.fillText('Với tất cả tình yêu', 400, 480);
-            
             ctx.font = 'bold 48px "Brush Script MT", cursive';
             ctx.fillText('IU NGUYÊN', 400, 540);
-            
             certificateImg.src = canvas.toDataURL();
         }
 
         function endCertificate() {
             celebrationAudio.pause();
             celebrationAudio.currentTime = 0;
-            
             certificateContainer.classList.remove('show');
             setTimeout(() => {
                 certificateContainer.style.display = 'none';
                 fireworksContainer.innerHTML = '';
-                
                 // Hiển thị app chính
                 mainApp.style.display = 'block';
                 initFloatingImages();
-                
                 // Ẩn instruction sau 5 giây
                 setTimeout(() => {
                     instruction.style.opacity = '0';
@@ -1412,12 +1545,10 @@ Thương em rất nhiều.</p>
             setTimeout(() => {
                 letterContainer.classList.add('show');
             }, 10);
-            
             // Phát nhạc xinloi.mp3
             backgroundMusic.pause();
             letterAudio.currentTime = 0;
             letterAudio.play().catch(console.log);
-            
             // Sự kiện cho nút skip
             skipLetterBtn.addEventListener('click', closeLetter);
             skipLetterBtn.addEventListener('touchstart', (e) => {
@@ -1430,18 +1561,15 @@ Thương em rất nhiều.</p>
             // Dừng nhạc lá thư
             letterAudio.pause();
             letterAudio.currentTime = 0;
-            
             // Tiếp tục nhạc nền
             if (isMusicPlaying) {
                 backgroundMusic.play().catch(console.log);
             }
-            
             letterContainer.classList.remove('show');
             setTimeout(() => {
                 letterContainer.style.display = 'none';
                 showMainView();
             }, 500);
-            
             // Reset counter
             letterCatchAttempts = 0;
             catchCount.textContent = '0';
@@ -1450,16 +1578,13 @@ Thương em rất nhiều.</p>
 
         function checkLetterEscape(clientX, clientY) {
             if (!letterElement || letterEscaping) return;
-            
             const rect = letterElement.getBoundingClientRect();
             const letterCenterX = rect.left + rect.width / 2;
             const letterCenterY = rect.top + rect.height / 2;
-            
             const distance = Math.sqrt(
                 Math.pow(clientX - letterCenterX, 2) + 
                 Math.pow(clientY - letterCenterY, 2)
             );
-            
             // Nếu chuột đến gần lá thư (trong vòng 150px)
             if (distance < 150) {
                 escapeLetter();
@@ -1468,26 +1593,21 @@ Thương em rất nhiều.</p>
 
         function escapeLetter() {
             if (!letterElement || letterEscaping) return;
-            
             letterEscaping = true;
-            
             // Hiệu ứng nhảy
-            letterElement.style.animation = 'letterDance 0.8s ease-out forwards';
-            
-            // Sau khi nhảy xong, di chuyển đến vị trí mới
+            letterElement.style.animation = 'letterDance 0.35s ease-out forwards';
+
+            // Sau khi nhảy xong (faster), di chuyển đến vị trí mới
             setTimeout(() => {
                 const margin = 15;
                 const newX = margin + Math.random() * (100 - 2 * margin);
                 const newY = margin + Math.random() * (100 - 2 * margin);
-                
                 letterElement.style.left = `${newX}%`;
                 letterElement.style.top = `${newY}%`;
                 letterElement.style.animation = 'letterFloat 3s ease-in-out infinite';
-                
                 // Tăng counter
                 letterCatchAttempts++;
                 catchCount.textContent = letterCatchAttempts;
-                
                 // Hiển thị counter nếu chưa
                 if (letterCatchAttempts === 1) {
                     letterCatchCounter.style.display = 'block';
@@ -1496,34 +1616,29 @@ Thương em rất nhiều.</p>
                         letterCatchCounter.style.animation = 'instructionFloat 3s ease-in-out infinite';
                     }, 10);
                 }
-                
                 // Hiệu ứng đếm
                 letterCatchCounter.style.transform = 'translateX(-50%) scale(1.1)';
                 setTimeout(() => {
                     letterCatchCounter.style.transform = 'translateX(-50%) scale(1)';
                 }, 300);
-                
                 // Nếu đã bắt được 3 lần, mở lá thư
                 if (letterCatchAttempts >= LETTER_CATCH_REQUIRED) {
                     setTimeout(() => {
                         showLetter();
-                    }, 500);
+                    }, 200);
                 }
-                
                 letterEscaping = false;
-            }, 800);
+            }, 350);
         }
 
         // ================== MAIN VIEW FUNCTIONS ==================
         function showMainView() {
             // Hiển thị nút back
             backButton.style.display = 'none';
-            
             // Hiển thị tất cả floating images
             floatingImages.forEach(img => {
                 img.element.style.display = 'block';
             });
-            
             // Ẩn selected view
             selectedContainer.classList.remove('show');
             setTimeout(() => {
@@ -1539,119 +1654,100 @@ Thương em rất nhiều.</p>
             letterElement = null;
             letterCatchAttempts = 0;
 
-            const ALBUM_IMAGES = [
-                { image: 'image/image1.png' },
-                { image: 'image/image2.png' },
-                { image: 'image/image3.png' },
-                { image: 'image/image4.png' },
-                { image: 'image/image5.png' },
-                { image: 'image/image6.png' },
-                { image: 'image/image7.png' },
-                { image: 'image/image8.png' },
-                { image: 'image/image9.png' },
-                { image: 'image/image10.png' },
-                { 
-                    image: 'letter-icon.png',
-                    isLetter: true 
-                }
-            ];
+            // Use album images (letter is handled separately in menu)
+            const ALBUM_IMAGES = getAlbumImages();
 
             ALBUM_IMAGES.forEach((item, index) => {
                 const floatingDiv = document.createElement('div');
                 floatingDiv.className = 'floating-image';
-                if (item.isLetter) {
-                    floatingDiv.classList.add('letter');
-                }
+                // no special letter element here; letters are in the floating menu
                 floatingDiv.dataset.index = index;
-                
                 floatingDiv.style.animationDelay = `${index * 0.2}s`;
-                
                 const img = document.createElement('img');
-                if (item.isLetter) {
-                    // Nếu là lá thư, sử dụng icon đặc biệt
-                    img.src = item.image || createLetterIcon();
-                    img.alt = 'Lá thư';
-                } else {
-                    img.src = item.image;
-                    img.alt = 'Kỷ niệm';
-                }
+                img.src = item.image;
+                img.alt = 'Kỷ niệm';
                 img.draggable = false;
                 img.onerror = function() {
-                    if (item.isLetter) {
-                        this.src = createLetterIcon();
-                    } else {
-                        this.src = createPlaceholderImage('Kỷ niệm');
-                    }
+                    this.src = createPlaceholderImage('Kỷ niệm');
                 };
-                
                 floatingDiv.appendChild(img);
-                
                 // Click/tap event
                 floatingDiv.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    if (!item.isLetter) {
-                        selectImage(index);
-                    }
+                    selectImage(index);
                 });
-                
                 // Touch events
                 floatingDiv.addEventListener('touchstart', handleTouchStart);
                 floatingDiv.addEventListener('touchmove', handleTouchMove);
                 floatingDiv.addEventListener('touchend', handleTouchEnd);
-                
                 // Mouse events
                 floatingDiv.addEventListener('mousedown', handleMouseDown);
                 floatingDiv.addEventListener('mouseenter', () => {
-                    if (!isMobile && !item.isLetter) floatingDiv.classList.add('active');
+                    if (!isMobile) {
+                        floatingDiv.classList.add('active');
+                    }
                 });
                 floatingDiv.addEventListener('mouseleave', () => {
-                    if (!isMobile && !item.isLetter) floatingDiv.classList.remove('active');
+                    if (!isMobile) {
+                        floatingDiv.classList.remove('active');
+                    }
                 });
-                
                 floatingContainer.appendChild(floatingDiv);
-                
-                // Random position
-                const margin = 15;
-                const x = margin + Math.random() * (100 - 2 * margin);
-                const y = margin + Math.random() * (100 - 2 * margin);
-                
+                // Choose a non-overlapping random position (percentage based)
+                const margin = 6;
+                const elemRect = floatingDiv.getBoundingClientRect();
+                const elemW = elemRect.width || 200;
+                const elemH = elemRect.height || 200;
+                const minDist = Math.max(elemW, elemH) * 0.9; // minimal center distance in px (larger to avoid overlap)
+
+                if (!window._placedPositions) window._placedPositions = [];
+                const placed = window._placedPositions;
+
+                let attempts = 0;
+                let x, y, ok;
+                do {
+                    x = margin + Math.random() * (100 - 2 * margin);
+                    y = margin + Math.random() * (100 - 2 * margin);
+                    attempts++;
+                    ok = true;
+                    for (let p of placed) {
+                        const dx = (p.x - x) * (floatingContainer.clientWidth / 100);
+                        const dy = (p.y - y) * (floatingContainer.clientHeight / 100);
+                        const dist = Math.sqrt(dx*dx + dy*dy);
+                        if (dist < minDist) { ok = false; break; }
+                    }
+                } while (!ok && attempts < 200);
+
+                placed.push({ x, y });
+
                 floatingImages.push({
                     element: floatingDiv,
                     x, y,
-                    width: parseFloat(getComputedStyle(floatingDiv).width),
-                    height: parseFloat(getComputedStyle(floatingDiv).height),
+                    width: elemW,
+                    height: elemH,
                     isDragging: false,
-                    isLetter: item.isLetter
+                    isLetter: false
                 });
-                
+
                 floatingDiv.style.left = `${x}%`;
                 floatingDiv.style.top = `${y}%`;
-                
-                // Lưu reference đến lá thư
-                if (item.isLetter) {
-                    letterElement = floatingDiv;
-                }
             });
-            
             // Modal events
             closeBtn.addEventListener('click', closeSelectedView);
             closeBtn.addEventListener('touchstart', (e) => {
                 e.preventDefault();
                 closeSelectedView();
             });
-            
             prevArrow.addEventListener('click', () => navigateImage(-1));
             prevArrow.addEventListener('touchstart', (e) => {
                 e.preventDefault();
                 navigateImage(-1);
             });
-            
             nextArrow.addEventListener('click', () => navigateImage(1));
             nextArrow.addEventListener('touchstart', (e) => {
                 e.preventDefault();
                 navigateImage(1);
             });
-            
             // Keyboard navigation
             document.addEventListener('keydown', (e) => {
                 if (selectedContainer.classList.contains('show')) {
@@ -1660,7 +1756,6 @@ Thương em rất nhiều.</p>
                     else if (e.key === 'Escape' || e.key === ' ') closeSelectedView();
                 }
             });
-            
             // Start animation
             requestAnimationFrame(animateFloatingImages);
         }
@@ -1669,62 +1764,24 @@ Thương em rất nhiều.</p>
         function handleTouchStart(e) {
             e.preventDefault();
             e.stopPropagation();
-            
             const touch = e.touches[0];
             const target = e.currentTarget;
             const index = parseInt(target.dataset.index);
-            const ALBUM_IMAGES = getAlbumImages();
-            const item = ALBUM_IMAGES[index];
-            
-            // Nếu là lá thư trên mobile, xử lý touch riêng
-            if (item.isLetter) {
-                letterCatchAttempts++;
-                catchCount.textContent = letterCatchAttempts;
-                
-                // Hiển thị counter nếu chưa
-                if (letterCatchAttempts === 1) {
-                    letterCatchCounter.style.display = 'block';
-                }
-                
-                // Hiệu ứng đếm
-                letterCatchCounter.style.transform = 'translateX(-50%) scale(1.1)';
-                setTimeout(() => {
-                    letterCatchCounter.style.transform = 'translateX(-50%) scale(1)';
-                }, 300);
-                
-                // Di chuyển lá thư
-                const margin = 15;
-                const newX = margin + Math.random() * (100 - 2 * margin);
-                const newY = margin + Math.random() * (100 - 2 * margin);
-                
-                target.style.left = `${newX}%`;
-                target.style.top = `${newY}%`;
-                
-                // Nếu đã bắt được 3 lần, mở lá thư
-                if (letterCatchAttempts >= LETTER_CATCH_REQUIRED) {
-                    setTimeout(() => {
-                        showLetter();
-                    }, 500);
-                }
-                return;
-            }
-            
+
             touchStartTime = Date.now();
-            
+
             longPressTimer = setTimeout(() => {
                 startDrag(target, touch.clientX, touch.clientY);
                 target.classList.remove('active');
             }, 300);
-            
+
             createRipple(target, touch.clientX, touch.clientY);
         }
 
         function handleTouchMove(e) {
             if (!isDragging) return;
-            
             e.preventDefault();
             e.stopPropagation();
-            
             const touch = e.touches[0];
             updateDragPosition(touch.clientX, touch.clientY);
         }
@@ -1732,22 +1789,15 @@ Thương em rất nhiều.</p>
         function handleTouchEnd(e) {
             e.preventDefault();
             e.stopPropagation();
-            
             clearTimeout(longPressTimer);
-            
             const target = e.currentTarget;
             const index = parseInt(target.dataset.index);
-            const ALBUM_IMAGES = getAlbumImages();
-            const item = ALBUM_IMAGES[index];
-            
-            if (Date.now() - touchStartTime < 300 && !isDragging && !item.isLetter) {
+            if (Date.now() - touchStartTime < 300 && !isDragging) {
                 selectImage(index);
             }
-            
             if (isDragging) {
                 endDrag();
             }
-            
             target.classList.remove('active');
         }
 
@@ -1755,15 +1805,10 @@ Thương em rất nhiều.</p>
         function handleMouseDown(e) {
             e.preventDefault();
             e.stopPropagation();
-            
             if (e.button !== 0) return;
-            
             const target = e.currentTarget;
-            
             startDrag(target, e.clientX, e.clientY);
-            
             createRipple(target, e.clientX, e.clientY);
-            
             document.addEventListener('mousemove', handleMouseMove);
             document.addEventListener('mouseup', handleMouseUp);
         }
@@ -1777,7 +1822,6 @@ Thương em rất nhiều.</p>
             if (isDragging) {
                 endDrag();
             }
-            
             document.removeEventListener('mousemove', handleMouseMove);
             document.removeEventListener('mouseup', handleMouseUp);
         }
@@ -1786,16 +1830,15 @@ Thương em rất nhiều.</p>
         function startDrag(element, clientX, clientY) {
             isDragging = true;
             dragImage = element;
-            
             const rect = element.getBoundingClientRect();
             dragOffset.x = clientX - rect.left;
             dragOffset.y = clientY - rect.top;
-            
+            // Ensure element can be positioned absolutely while dragging
+            element.style.position = 'absolute';
             element.style.zIndex = '1000';
             element.style.cursor = 'grabbing';
             element.style.transition = 'none';
             element.style.animationPlayState = 'paused';
-            
             const dragIndex = floatingImages.findIndex(img => img.element === element);
             if (dragIndex !== -1) {
                 floatingImages[dragIndex].isDragging = true;
@@ -1804,19 +1847,14 @@ Thương em rất nhiều.</p>
 
         function updateDragPosition(clientX, clientY) {
             if (!dragImage || !isDragging) return;
-            
             const containerRect = floatingContainer.getBoundingClientRect();
-            
             const newX = ((clientX - dragOffset.x - containerRect.left) / containerRect.width) * 100;
             const newY = ((clientY - dragOffset.y - containerRect.top) / containerRect.height) * 100;
-            
             const margin = 5;
             const clampedX = Math.max(margin, Math.min(newX, 100 - margin));
             const clampedY = Math.max(margin, Math.min(newY, 100 - margin));
-            
             dragImage.style.left = `${clampedX}%`;
             dragImage.style.top = `${clampedY}%`;
-            
             const dragIndex = floatingImages.findIndex(img => img.element === dragImage);
             if (dragIndex !== -1) {
                 floatingImages[dragIndex].x = clampedX;
@@ -1826,31 +1864,24 @@ Thương em rất nhiều.</p>
 
         function endDrag() {
             if (!dragImage) return;
-            
             isDragging = false;
-            
             dragImage.style.zIndex = '10';
             dragImage.style.cursor = 'pointer';
             dragImage.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
             dragImage.style.animationPlayState = 'running';
-            
             const dragIndex = floatingImages.findIndex(img => img.element === dragImage);
             if (dragIndex !== -1) {
                 floatingImages[dragIndex].isDragging = false;
             }
-            
             dragImage = null;
         }
 
         // ================== SELECT IMAGE ==================
         function selectImage(index) {
             currentSelectedIndex = index;
-            
             const ALBUM_IMAGES = getAlbumImages();
             const item = ALBUM_IMAGES[index];
-            
             selectedImg.style.opacity = '0';
-            
             const img = new Image();
             img.onload = () => {
                 selectedImg.src = item.image;
@@ -1861,19 +1892,15 @@ Thương em rất nhiều.</p>
                 selectedImg.style.opacity = '1';
             };
             img.src = item.image;
-            
             // Xóa title và description
             selectedDetails.innerHTML = '';
-            currentIndicator.textContent = `${index + 1} / ${ALBUM_IMAGES.length - 1}`;
-            
+            currentIndicator.textContent = `${index + 1} / ${ALBUM_IMAGES.length}`;
             selectedContainer.style.display = 'flex';
             setTimeout(() => {
                 selectedContainer.classList.add('show');
                 document.body.style.overflow = 'hidden';
-                
                 // Hiển thị nút back
                 backButton.style.display = 'flex';
-                
                 // Ẩn tất cả floating images
                 floatingImages.forEach(img => {
                     img.element.style.display = 'none';
@@ -1882,22 +1909,8 @@ Thương em rất nhiều.</p>
         }
 
         function navigateImage(direction) {
-            let newIndex = currentSelectedIndex + direction;
-            
             const ALBUM_IMAGES = getAlbumImages();
-            
-            // Bỏ qua lá thư khi navigation
-            if (ALBUM_IMAGES[newIndex] && ALBUM_IMAGES[newIndex].isLetter) {
-                newIndex += direction;
-            }
-            
-            newIndex = (newIndex + ALBUM_IMAGES.length) % ALBUM_IMAGES.length;
-            
-            // Nếu lại gặp lá thư, tiếp tục bỏ qua
-            if (ALBUM_IMAGES[newIndex] && ALBUM_IMAGES[newIndex].isLetter) {
-                newIndex = (newIndex + direction + ALBUM_IMAGES.length) % ALBUM_IMAGES.length;
-            }
-            
+            let newIndex = (currentSelectedIndex + direction + ALBUM_IMAGES.length) % ALBUM_IMAGES.length;
             selectImage(newIndex);
         }
 
@@ -1907,28 +1920,28 @@ Thương em rất nhiều.</p>
 
         // ================== FLOATING ANIMATION ==================
         function animateFloatingImages() {
+            // Skip dynamic floating when in grid mode (neat layout)
+            if (floatingContainer.classList.contains('grid-mode')) {
+                requestAnimationFrame(animateFloatingImages);
+                return;
+            }
             floatingImages.forEach((img, index) => {
                 if (img.isDragging) return;
-                
                 const time = Date.now() * 0.001;
                 const floatX = Math.sin(time + index * 0.5) * 0.3;
                 const floatY = Math.cos(time + index * 0.3) * 0.5;
-                
                 const rotationX = Math.sin(time + index * 0.7) * 0.5;
                 const rotationY = Math.cos(time + index * 0.4) * 0.3;
-                
                 // Nếu không phải lá thư, áp dụng animation bình thường
                 if (!img.isLetter) {
                     img.element.style.transform = `translate(${floatX}px, ${floatY}px) rotateX(${rotationX}deg) rotateY(${rotationY}deg)`;
                 }
-                
                 const centerX = 50;
                 const centerY = 50;
                 const distance = Math.sqrt(Math.pow(img.x - centerX, 2) + Math.pow(img.y - centerY, 2));
                 const opacity = 0.7 + 0.3 * Math.max(0, 1 - distance / 40);
                 img.element.style.opacity = opacity;
             });
-            
             requestAnimationFrame(animateFloatingImages);
         }
 
@@ -1944,24 +1957,17 @@ Thương em rất nhiều.</p>
                 { image: 'image/image7.png' },
                 { image: 'image/image8.png' },
                 { image: 'image/image9.png' },
-                { image: 'image/image10.png' },
-                { 
-                    image: 'letter-icon.png',
-                    isLetter: true 
-                }
+                { image: 'image/image10.png' }
             ];
         }
 
         function createRipple(element, x, y) {
             const ripple = document.createElement('span');
             ripple.className = 'ripple';
-            
             const rect = element.getBoundingClientRect();
             ripple.style.left = `${x - rect.left}px`;
             ripple.style.top = `${y - rect.top}px`;
-            
             element.appendChild(ripple);
-            
             setTimeout(() => {
                 ripple.remove();
             }, 600);
@@ -1970,38 +1976,31 @@ Thương em rất nhiều.</p>
         function createPlaceholderImage(title, large = false) {
             const width = large ? 800 : 400;
             const height = large ? 600 : 300;
-            
             const canvas = document.createElement('canvas');
             canvas.width = width;
             canvas.height = height;
             const ctx = canvas.getContext('2d');
-            
             const gradient = ctx.createLinearGradient(0, 0, width, height);
             gradient.addColorStop(0, '#1a1a1a');
             gradient.addColorStop(1, '#0a0a0a');
             ctx.fillStyle = gradient;
             ctx.fillRect(0, 0, width, height);
-            
             ctx.strokeStyle = '#FFD700';
             ctx.lineWidth = large ? 4 : 2;
             ctx.strokeRect(20, 20, width - 40, height - 40);
-            
             if (large) {
                 ctx.lineWidth = 2;
                 ctx.setLineDash([10, 5]);
                 ctx.strokeRect(30, 30, width - 60, height - 60);
                 ctx.setLineDash([]);
             }
-            
             ctx.fillStyle = '#FFD700';
             ctx.font = `bold ${large ? '80' : '40'}px Arial`;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillText('📷', width/2, height/2 - (large ? 40 : 20));
-            
             ctx.font = `${large ? 'bold 32px' : 'bold 16px'} -apple-system, sans-serif`;
             ctx.fillText(title, width/2, height/2 + (large ? 40 : 20));
-            
             return canvas.toDataURL();
         }
 
@@ -2010,19 +2009,16 @@ Thương em rất nhiều.</p>
             canvas.width = 400;
             canvas.height = 300;
             const ctx = canvas.getContext('2d');
-            
             // Background
             const gradient = ctx.createLinearGradient(0, 0, 400, 300);
             gradient.addColorStop(0, '#2a2a2a');
             gradient.addColorStop(1, '#1a1a1a');
             ctx.fillStyle = gradient;
             ctx.fillRect(0, 0, 400, 300);
-            
             // Envelope shape
             ctx.strokeStyle = '#FF5555';
             ctx.lineWidth = 3;
             ctx.fillStyle = '#442222';
-            
             // Envelope body
             ctx.beginPath();
             ctx.moveTo(50, 100);
@@ -2031,23 +2027,19 @@ Thương em rất nhiều.</p>
             ctx.closePath();
             ctx.fill();
             ctx.stroke();
-            
             // Letter inside
             ctx.fillStyle = '#FFFFFF';
             ctx.fillRect(80, 120, 240, 60);
-            
             // Heart
             ctx.fillStyle = '#FF5555';
             ctx.font = 'bold 60px Arial';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillText('💌', 200, 150);
-            
             // Text
             ctx.font = 'bold 24px Arial';
             ctx.fillStyle = '#FF5555';
             ctx.fillText('Lá Thư', 200, 230);
-            
             return canvas.toDataURL();
         }
 
@@ -2056,7 +2048,6 @@ Thương em rất nhiều.</p>
             for (let i = 0; i < 50; i++) {
                 setTimeout(() => createFirework(), i * 200);
             }
-            
             const fireworkInterval = setInterval(() => {
                 if (certificateContainer.style.display === 'flex') {
                     createFirework();
@@ -2069,20 +2060,15 @@ Thương em rất nhiều.</p>
         function createFirework() {
             const firework = document.createElement('div');
             firework.className = 'firework';
-            
             // Random position
             firework.style.left = Math.random() * 100 + '%';
             firework.style.top = Math.random() * 100 + '%';
-            
             fireworksContainer.appendChild(firework);
-            
             const size = 4 + Math.random() * 6;
             firework.style.width = size + 'px';
             firework.style.height = size + 'px';
-            
             const particleCount = 30 + Math.floor(Math.random() * 40);
             const duration = 1000 + Math.random() * 800;
-            
             // Launch firework
             firework.animate([
                 { transform: 'scale(0.5)', opacity: 0 },
@@ -2109,18 +2095,14 @@ Thương em rất nhiều.</p>
             particle.className = 'firework';
             particle.style.left = x;
             particle.style.top = y;
-            
             const size = 2 + Math.random() * 3;
             particle.style.width = size + 'px';
             particle.style.height = size + 'px';
-            
             fireworksContainer.appendChild(particle);
-            
             const angle = Math.random() * Math.PI * 2;
             const distance = 40 + Math.random() * 80;
             const targetX = Math.cos(angle) * distance;
             const targetY = Math.sin(angle) * distance;
-            
             particle.animate([
                 { transform: 'translate(0, 0) scale(1)', opacity: 1 },
                 { transform: `translate(${targetX}px, ${targetY}px) scale(0)`, opacity: 0 }
